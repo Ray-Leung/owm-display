@@ -291,7 +291,7 @@ function dialTemperature(chartName, forecast)
 	});
 }
 
-function plotWindSpeed(chartName, forecast)
+function plotWindSpeed(chartName, forecast, owm)
 {
 	var wind = new Array();
 	var gust = new Array();
@@ -304,17 +304,21 @@ function plotWindSpeed(chartName, forecast)
 				forecast[i].windSpeed
 			]);
 
-		gust.push([
-				milliSeconds(fixTimezone(forecast[i].time)),
-				forecast[i].windGust
-			]);
-
 		if(i % 3 == 0) {
 			icons.push({
 					x: milliSeconds(fixTimezone(forecast[i].time)),
 					y: -0.5,
 					marker: { symbol: 'url(img/directions/' + translateToDirection(forecast[i].windBearing) + '.png)' }
 				});
+		}
+	}
+
+	for(var i = 0; i <  owm.length; i ++){
+		if(owm[i].dt <= forecast.reverse()[0].time) {
+			gust.push([
+				milliSeconds(fixTimezone(owm[i].dt)),
+				owm[i].wind.gust
+			]);
 		}
 	}
 
@@ -349,6 +353,7 @@ function plotWindSpeed(chartName, forecast)
 			plotLines: stripeNow(forecast),
 		},
 		plotOptions: {
+			stacking: 'normal',
 			series: {
 				marker: {
 					enabled: false

@@ -149,10 +149,16 @@ jQuery(document).ready(function() {
 			type: 'GET',
 			dataType: 'jsonp',
 			error: errorHandler
+		}),
+		$.ajax({
+			url: "http://api.openweathermap.org/data/2.1/forecast/city/?id=2853260&units=metric&callback=?",
+			type: 'GET',
+			dataType: 'jsonp',
+			error: errorHandler
 		})
 		).done(
-			function(a1, a2, a3){
-				mergeData(a1[0], a2[0], a3[0]);
+			function(a1, a2, a3, a4){
+				mergeData(a1[0], a2[0], a3[0], a4[0]);
 			});
 
 		$.ajax({
@@ -169,7 +175,7 @@ jQuery(document).ready(function() {
 });
 
 
-function mergeData(minus1, minus2, forecast)
+function mergeData(minus1, minus2, forecast, owm)
 {
 	var span = Array();
 	dataReceived = true;
@@ -187,10 +193,10 @@ function mergeData(minus1, minus2, forecast)
 		span.push(forecast.hourly.data[i])
 	}
 	var current = forecast.currently
-	renderData(span, forecast.hourly.data, current);
+	renderData(span, forecast.hourly.data, current, owm.list);
 }
 
-function renderData(span, future, current)
+function renderData(span, future, current, owm)
 {
 	hide('loading');
 	show('map-rain');
@@ -202,7 +208,7 @@ function renderData(span, future, current)
 	dialWind('dial-wind', future);
 	plotPressure('chart-pressure', span, current);
 	plotTemperature('chart-temp', span);
-	plotWindSpeed('chart-wind', span);
+	plotWindSpeed('chart-wind', span, owm);
 	plotRain('chart-rain', span);
 	placeDate('date', span);
 }
